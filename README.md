@@ -1,3 +1,12 @@
+# Highly Available Three‑Tier AWS Architecture
+
+[![Terraform](https://img.shields.io/badge/Terraform-1.x-623CE4?logo=terraform)]()
+[![AWS](https://img.shields.io/badge/AWS-Cloud-orange?logo=amazonaws)]()
+[![Architecture](https://img.shields.io/badge/Architecture-3--Tier-blue)]()
+[![IaC](https://img.shields.io/badge/Infrastructure_as_Code-Terraform-4CAF50)]()
+
+
+
 # Highly Available Three-Tier VPC on AWS
 
 ## Architecture Diagram
