@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored - never commit real credentials.
+
+db_password = "ChangeMe-UseAStrongPassword123!"
+
+# Optional overrides:
+# region       = "us-east-1"
+# project_name = "three-tier-vpc-demo"
