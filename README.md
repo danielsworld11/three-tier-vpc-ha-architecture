@@ -21,7 +21,7 @@ Architecture Diagram
               │                               │
               └──────────── RDS PostgreSQL (Multi-AZ) ───────────┘
 
-(Replace this ASCII diagram with a VPC map screenshot or draw.io export — see screenshots/.)
+
 ---
 Objectives
 Build a realistic three‑tier architecture on AWS: a public load balancer, a private application tier, and a fully isolated database tier.
