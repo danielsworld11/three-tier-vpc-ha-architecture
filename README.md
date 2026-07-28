@@ -143,14 +143,62 @@ then destroyed via `terraform destroy` to avoid ongoing charges. Primary
 cost drivers while running: 2x NAT Gateway (hourly + data processing),
 RDS Multi-AZ instance, and ALB hourly rate.
 
-## Lessons Learned
-
-*(Fill in after building — a few prompts to get you started)*
-
-- Why per-AZ NAT Gateways instead of one shared NAT Gateway? (cost vs.
-  resilience trade-off)
-- Why SSM over SSH key pairs?
-- What would break if the DB subnet route table accidentally got a
-  route to the Internet Gateway?
-- What's the blast radius if the App SG allowed `0.0.0.0/0` instead of
-  just the ALB SG?
+Here are clean, sharp, interview‑ready answers you can paste straight into your README.
+---
+Lessons Learned
+Why per‑AZ NAT Gateways instead of one shared NAT Gateway?
+Using one NAT Gateway creates a hidden single point of failure.
+If the AZ hosting that NAT fails, all private subnets lose outbound internet, breaking:
+EC2 package installs
+SSM Session Manager
+App updates
+External API calls
+Using one NAT Gateway per AZ ensures each private subnet has its own independent egress path.
+Trade‑off:
+Higher cost (≈ $0.045/hr per NAT + data)
+Much higher resilience and true Multi‑AZ design
+This is a classic AWS architecture trade‑off: cost vs availability.
+---
+Why SSM over SSH key pairs?
+SSM Session Manager removes the need for:
+SSH keys
+Port 22
+Bastion hosts
+Public IPs
+Benefits:
+Zero open inbound ports → massively reduces attack surface
+IAM‑based access control → no key rotation headaches
+Audited sessions → CloudTrail + SSM logs
+Works inside private subnets → no public exposure
+This is the modern AWS best practice for EC2 access.
+---
+What would break if the DB subnet route table accidentally got a route to the Internet Gateway?
+If the DB subnet had a route to the IGW, the database would become publicly routable, even if “Publicly Accessible = NO”.
+Consequences:
+Violates AWS security best practices
+Breaks the principle of least privilege
+Exposes RDS to the public internet
+Could allow inbound traffic if SGs/NACLs were misconfigured
+Fails compliance standards (PCI, SOC2, ISO27001)
+A DB subnet must never have a route to the IGW.
+It should only route within the VPC.
+---
+What’s the blast radius if the App SG allowed `0.0.0.0/0` instead of just the ALB SG?
+If the App SG allowed inbound from 0.0.0.0/0, your EC2 instances would be exposed to the entire internet.
+Impact:
+Anyone could hit your application servers directly
+ALB protections (WAF, health checks, throttling) are bypassed
+Attack surface increases massively
+Potential for:
+Port scanning
+Exploits
+DDoS
+Credential stuffing
+Direct traffic to backend APIs
+By restricting inbound traffic to only the ALB SG, you enforce:
+Layer‑7 filtering
+Centralized entry point
+Proper load balancing
+Security group chaining
+Zero direct exposure of private EC2 instances
+This is one of the most important security patterns in AWS.
